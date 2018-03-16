@@ -1,0 +1,11 @@
+USE codeup_test_db;
+DROP TABLE IF EXISTS codeup_test_db;
+CREATE TABLE contacts (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(50) NOT NULL,
+  number VARCHAR(11) NOT NULL,
+  email VARCHAR(100),
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  PRIMARY KEY (id)
+);
