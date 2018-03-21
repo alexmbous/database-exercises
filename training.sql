@@ -196,4 +196,74 @@ SELECT CURTIME();
 
 SELECT CONCAT('Teaching people to code for ', UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2014-02-04'), ' seconds');
 
+#Using the GROUP BY clause
+#GROUP BY follows the same syntax as ORDER BY.
 
+
+#SELECT column FROM table GROUP BY column_name [ASC|DESC];
+#However, GROUP BY returns only the unique occurrences of the column specified.
+
+
+SELECT DISTINCT first_name
+FROM employees;
+#Should get the same results as:
+
+
+SELECT first_name
+FROM employees
+GROUP BY first_name;
+#you can also specify ASC and DESC after columns named in the clause like so:
+
+
+SELECT first_name
+FROM employees
+GROUP BY first_name DESC;
+#We can also use multiple columns:
+
+
+SELECT last_name, first_name
+FROM employees
+GROUP BY last_name, first_name;
+#The above query will show us all of the unique combinations of first and last names, grouped by thier last name sorted alphebetically, and within each last name group, sorted by first name.
+
+#Any column(s) that appear in the SELECT should also be in the GROUP BY clause.
+
+#Aggregate Functions
+#The functions we have seen so far look at data in a single column or possibly across an entire row. An aggregate function works with data across all the rows in our result. There are many aggregate functions listed in the MySQL documentation page. COUNT() is the most commonly used, and that is the one we will be taking a look at.
+
+#COUNT
+#The COUNT() function will return the number of non-null expression values in a result. You will commonly see it written as COUNT(*). For example, if we wanted to see how many rows were in our employees table total, we would run:
+
+
+SELECT COUNT(*) FROM employees;
+#If we were only concerned about the values in a given column, we can pass that to the COUNT() function:
+
+
+SELECT COUNT(first_name)
+FROM employees
+WHERE first_name NOT LIKE '%a%';
+#This query will return a count of all first names that do not have an a in them from the employees table. The result should be 118195. If for some reason an employee's first name was NULL, it would not be counted here.
+
+#Using GROUP BY with Aggregate Functions
+#We can combine our use of aggregate functions with the GROUP BY clause to produce more meaningful results.
+
+#If we want to find out how many unique first names that do not contain an 'a', we know we can use a GROUP BY, but we can also combine this with the aggregate COUNT function to find how many employees have each unique last name:
+
+
+SELECT first_name, COUNT(first_name)
+FROM employees
+WHERE first_name NOT LIKE '%a%'
+GROUP BY first_name;
+#This query will output each unique first name without an 'a', as well as the number of employees with that first name. Notice also that this query returns 500 results. While there are 118,195 employees with a first name that did not have the letter a, there are only 500 unique first names that do not have an 'a' in them.
+
+#Take the query below as another example:
+
+
+SELECT hire_date, COUNT(*)
+FROM employees
+GROUP BY hire_date
+ORDER BY COUNT(*) DESC
+LIMIT 10;
+#This will show us the 10 most common hire dates for employees.
+
+#The COUNT() function will be the one you used most frequently, but there are many others such as SUM(), AVG(), MIN() and MAX(). There are even functions that do statistical analysis like STDDEV() and VARIANCE(). Using aggregates can save a lot of tedious looping and arithmetic on your end.
