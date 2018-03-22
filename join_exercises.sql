@@ -51,21 +51,37 @@ WHERE dm.to_date LIKE '9999-%'
 
 #Bonus Find the names of all current employees, their department name, and their current manager's name.
 
-#         NEED HELP WITH THIS
-
-SELECT   d.dept_name AS 'Department Name',
-  CONCAT(mortals.first_name, ' ', mortals.last_name) AS 'Name',
+#  FER's answer for the bonus from the lecture.
+SELECT
+  d.dept_name AS 'Department',
+  CONCAT(mortals.first_name,' ', mortals.last_name) AS 'Employee Name',
   CONCAT(mgmt.first_name,' ',mgmt.last_name) AS 'Manager Name'
+FROM employees mortals
+  JOIN dept_emp de ON mortals.emp_no = de.emp_no
+  JOIN departments d ON de.dept_no = d.dept_no
+  JOIN dept_manager manager ON d.dept_no = manager.dept_no
+  JOIN employees mgmt ON manager.emp_no = mgmt.emp_no
+WHERE de.to_date > curdate()
+      AND manager.to_date > curdate()
+ORDER BY d.dept_name;
+
+
+
+
+SELECT   d.dept_name AS 'Department',
+  CONCAT(mortals.first_name, ' ', mortals.last_name) AS 'Name',
+  CONCAT(mgmt.first_name,' ',mgmt.last_name) AS 'Manager'
 FROM employees AS mortals
   JOIN dept_emp AS emp
     ON mortals.emp_no = emp.emp_no
   JOIN departments AS d
     ON emp.dept_no = d.dept_no
   JOIN dept_manager AS dm
-    ON emp.dept_no = dm.dept_no
+    ON d.dept_no = dm.dept_no
   JOIN employees mgmt
-    ON emp.emp_no = mgmt.emp_no
+    ON dm.emp_no = mgmt.emp_no
 WHERE emp.to_date LIKE '9999-%'
-    ;
+      AND dm.to_date > '9999-%'
+ORDER BY d.dept_name;
 
 
